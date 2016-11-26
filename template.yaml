@@ -1,0 +1,53 @@
+default:
+    width: 910
+    height: 550
+    logo:
+        display: True
+        size: 64
+        dependency: none
+        align: left
+        x: 18
+        y: 18
+    team:
+        display: True
+        font: default
+        size: 32
+        dependency: none
+        align: left
+        x: 100
+        y: 34
+    icon:
+        display: True
+        size: 384
+        dependency: none
+        align: left 
+        x: 42
+        y: 124
+    real:
+        display: True
+        font: default
+        size: 64
+        dependency: none
+        align: left
+        x: 450
+        y: 150
+        width: 450
+    name:
+        display: True
+        font: default
+        size: 56
+        dependency: none
+        align: left
+        x: 450
+        y: 300
+        width: 450
+    title:
+        display: False
+        font: default
+        size: 48
+        dependency: none
+        align: left
+        x: 450
+        y: 380
+        width: 450
+
