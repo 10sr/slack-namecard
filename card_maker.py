@@ -14,6 +14,12 @@ from wand.color import Color
 from PyPDF2 import PdfFileWriter, PdfFileReader
 
 def make_pdf(user_info_list, team_info, template):
+    # define const
+    A4_WIDTH = 595
+    A4_HEIGHT = 842
+
+    scale = 0
+
     # check pdf directory exist(if not, make)
     path_team_dir = '/'.join((os.path.abspath(os.path.dirname(__file__)), 'deliverable', team_info['name']))
     path_card_dir = '/'.join((path_team_dir, 'namecard'))
@@ -30,7 +36,20 @@ def make_pdf(user_info_list, team_info, template):
         dummy = Image(filename = path_dummy_card)
         for i in range(10):
             cards_base.composite(dummy, dummy.width * (i % 2), dummy.height * (i // 2))
-        cards_base.save(filename = '/'.join((path_team_dir, 'dummy.pdf')))
+        path_tmp_pdf = '/'.join((path_pdf_dir, 'dummy.pdf'))
+        cards_base.save(filename = path_tmp_pdf)
+        # resize to a4
+        with open(path_tmp_pdf, 'rb') as dummy_tmp:
+            input_pdf = PdfFileReader(dummy_tmp)
+            page = input_pdf.getPage(0)
+            origin_size = page.mediaBox.upperRight
+            scale = min(A4_WIDTH / origin_size[0], A4_HEIGHT / origin_size[1])
+            page.scaleBy(scale)
+            path_dummy_pdf = '/'.join((path_team_dir, 'dummy.pdf'))
+            with open(path_dummy_pdf, 'wb') as dummy_output:
+                output_pdf = PdfFileWriter()
+                output_pdf.addPage(page)
+                output_pdf.write(dummy_output)
 
     # split users by 10
     pdf_list = []
@@ -51,12 +70,17 @@ def make_pdf(user_info_list, team_info, template):
                 cards_base.composite(card, card.width * (i % 2), card.height * (i // 2))
         path_tmp_pdf = ''.join((path_pdf_dir, '/', str(j), '.pdf'))
         cards_base.save(filename = path_tmp_pdf)
+        # resize to a4
         input_pdf = PdfFileReader(open(path_tmp_pdf, 'rb'))
-        output_pdf.addPage(input_pdf.getPage(0))
+        page = input_pdf.getPage(0)
+        if scale == 0:
+            origin_size = page.mediaBox.upperRight
+            scale = min(A4_WIDTH / origin_size[0], A4_HEIGHT / origin_size[1])
+        page.scaleBy(scale)
+        output_pdf.addPage(page)
 
     with open(path_output_pdf, 'wb') as output_file:
         output_pdf.write(output_file)
-    
 
 def make_namecard(user_info_list, team_info, template):
     # check team directory exist(if not, make)
