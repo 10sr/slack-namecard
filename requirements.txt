@@ -1,2 +1,3 @@
 wand
 PyYaml
+PyPDF2
